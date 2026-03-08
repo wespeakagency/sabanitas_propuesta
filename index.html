@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sabanitas Digital - Cotización</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #0a0a0a;
+      color: #f5f5f5;
+      overflow: hidden;
+    }
+    .text-gradient {
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-image: linear-gradient(to right, #2dd4bf, #3b82f6);
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    .slide {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .scope-tab-content {
+      display: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+    .scope-tab-content.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Montserrat', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4',
+              400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e',
+              800: '#115e59', 900: '#134e4a', 950: '#042f2e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-screen w-screen bg-[#0a0a0a] text-white overflow-hidden flex flex-col selection:bg-brand-500/30">
+
+  <!-- Menu Overlay -->
+  <div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden opacity-0 transition-opacity duration-300" onclick="toggleMenu(false)"></div>
+  <div id="menu-panel" class="fixed top-0 left-0 bottom-0 w-80 bg-[#111] border-r border-white/10 z-[70] flex flex-col shadow-2xl -translate-x-full transition-transform duration-300">
+    <div class="h-16 flex items-center justify-between px-6 border-b border-white/10 shrink-0">
+      <span class="font-bold text-white tracking-tight">Menú de Secciones</span>
+      <button onclick="toggleMenu(false)" class="p-2 -mr-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto py-4" id="menu-items-container">
+      <!-- Menu items injected via JS -->
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="h-16 flex items-center justify-between px-8 border-b border-white/10 shrink-0 z-50 bg-[#0a0a0a]">
+    <div class="flex items-center gap-4">
+      <button onclick="toggleMenu(true)" class="p-2 -ml-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white" title="Abrir menú">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+      <div class="font-bold tracking-tight">Sabanitas <span class="text-brand-400">Digital</span></div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div id="slide-counter" class="text-sm text-gray-400 font-medium">1 / 9</div>
+      <button onclick="toggleFullScreen()" class="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white" title="Pantalla completa">
+        <i data-lucide="maximize" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 relative overflow-hidden">
+    <div class="absolute inset-0 flex flex-col p-8 md:p-12 overflow-y-auto" id="slides-container">
+      
+      <!-- Slide 1: Hero -->
+      <div class="slide flex-1 flex-col items-center justify-center text-center relative w-full max-w-6xl mx-auto">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 z-10">
+          Brief Maestro | <span class="text-gradient">Sabanitas</span>
+        </h1>
+        <h2 class="text-3xl md:text-4xl text-gray-300 font-medium z-10">
+          Expansión Digital 2026
+        </h2>
+      </div>
+
+      <!-- Slide 2: Context -->
+      <div class="slide flex-1 flex-col justify-center max-w-6xl mx-auto w-full">
+        <h2 class="text-4xl font-bold mb-12 text-white">El Punto de Partida</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="p-10 rounded-3xl bg-white/5 border border-white/10">
+            <div class="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center mb-8">
+              <i data-lucide="store" class="w-7 h-7 text-gray-300"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-8">Modelo Actual</h3>
+            <ul class="space-y-6">
+              <li class="flex items-center gap-4 text-gray-300 text-lg">
+                <div class="w-2 h-2 bg-gray-500 rounded-full shrink-0"></div> Ventas por recomendación / físicas
+              </li>
+              <li class="flex items-center gap-4 text-gray-300 text-lg">
+                <div class="w-2 h-2 bg-gray-500 rounded-full shrink-0"></div> Procesos manuales (pedidos, stock)
+              </li>
+              <li class="flex items-center gap-4 text-gray-300 text-lg">
+                <div class="w-2 h-2 bg-gray-500 rounded-full shrink-0"></div> Visibilidad limitada a puntos de venta
+              </li>
+            </ul>
+          </div>
+          <div class="p-10 rounded-3xl bg-red-500/5 border border-red-500/20">
+            <div class="w-14 h-14 rounded-2xl bg-red-500/20 flex items-center justify-center mb-8">
+              <i data-lucide="trending-down" class="w-7 h-7 text-red-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-8">El Costo Operativo</h3>
+            <ul class="space-y-6">
+              <li class="flex items-center gap-4 text-red-200 text-lg">
+                <i data-lucide="alert-circle" class="w-6 h-6 text-red-400 shrink-0"></i> Crecimiento lento y no escalable
+              </li>
+              <li class="flex items-center gap-4 text-red-200 text-lg">
+                <i data-lucide="alert-circle" class="w-6 h-6 text-red-400 shrink-0"></i> Ceguera de datos (sin métricas claras)
+              </li>
+              <li class="flex items-center gap-4 text-red-200 text-lg">
+                <i data-lucide="alert-circle" class="w-6 h-6 text-red-400 shrink-0"></i> Fricción en la compra (pérdida de ventas)
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Objectives -->
+      <div class="slide flex-1 flex-col justify-center max-w-6xl mx-auto w-full">
+        <h2 class="text-4xl font-bold mb-12 text-white">Objetivos del Ecosistema</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="objectives-grid">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Slide 4: Scope -->
+      <div class="slide flex-1 flex-col justify-center max-w-6xl mx-auto w-full h-full py-8">
+        <h2 class="text-4xl font-bold mb-10 text-white">El Ecosistema (Alcance Detallado)</h2>
+        <div class="flex flex-col lg:flex-row gap-8 flex-1 min-h-0">
+          <div class="lg:w-1/3 flex flex-col gap-3 overflow-y-auto pr-2" id="scope-tabs">
+            <!-- Injected via JS -->
+          </div>
+          <div class="lg:w-2/3 flex flex-col relative" id="scope-content">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Strategy -->
+      <div class="slide flex-1 flex-col justify-center max-w-6xl mx-auto w-full">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 class="text-3xl font-bold mb-8 text-white">¿A quién le hablamos?</h2>
+            <div class="flex flex-col gap-4" id="strategy-audience">
+              <!-- Injected via JS -->
+            </div>
+            <div class="mt-8 p-6 rounded-2xl bg-brand-500/10 border border-brand-500/20 inline-block w-full">
+              <span class="text-brand-400 text-sm uppercase tracking-wider font-bold block mb-2">Foco Inicial</span>
+              <span class="text-white text-lg">CDMX y Área Metropolitana (Piloto de envíos)</span>
+            </div>
+          </div>
+          <div class="relative p-12 rounded-3xl bg-gradient-to-br from-brand-900/40 to-black border border-brand-500/20">
+            <i data-lucide="quote" class="w-16 h-16 text-brand-500/30 absolute top-8 left-8"></i>
+            <h2 class="text-sm font-bold text-brand-400 uppercase tracking-widest mb-8 relative z-10 ml-10">La Promesa</h2>
+            <p class="text-3xl md:text-4xl text-white font-medium leading-tight italic relative z-10">
+              "Blancos que hacen que tu cama se sienta como hotel, con compra fácil, envío rápido y calidad que se nota."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Roadmap -->
+      <div class="slide flex-1 flex-col justify-center max-w-6xl mx-auto w-full">
+        <h2 class="text-4xl font-bold mb-20 text-white text-center">Roadmap de Implementación</h2>
+        <div class="relative">
+          <div class="absolute top-1/2 left-0 w-full h-1 bg-white/10 -translate-y-1/2 hidden md:block"></div>
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-6" id="roadmap-grid">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Requirements -->
+      <div class="slide flex-1 flex-col justify-center max-w-6xl mx-auto w-full">
+        <div class="grid md:grid-cols-2 gap-16">
+          <div>
+            <div class="flex items-center gap-4 mb-10">
+              <div class="p-4 rounded-2xl bg-purple-500/20 text-purple-400">
+                <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+              </div>
+              <h2 class="text-4xl font-bold text-white">Requerimientos</h2>
+            </div>
+            <div class="space-y-4" id="reqs-list">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-4 mb-10">
+              <div class="p-4 rounded-2xl bg-blue-500/20 text-blue-400">
+                <i data-lucide="bar-chart-3" class="w-8 h-8"></i>
+              </div>
+              <h2 class="text-4xl font-bold text-white">KPIs (Métricas)</h2>
+            </div>
+            <div class="space-y-5" id="kpis-list">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Risks -->
+      <div class="slide flex-1 flex-col justify-center max-w-6xl mx-auto w-full">
+        <h2 class="text-4xl font-bold mb-16 text-white text-center">Riesgos y Mitigación</h2>
+        <div class="grid gap-6" id="risks-list">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Slide 9: Pricing -->
+      <div class="slide flex-1 flex-col justify-center max-w-7xl mx-auto w-full h-full py-8">
+        <h2 class="text-4xl font-bold mb-8 text-white">Cotización Desglosada</h2>
+        <div class="flex flex-col lg:flex-row gap-8 flex-1 min-h-0">
+          <!-- Configurator -->
+          <div class="lg:w-2/3 overflow-y-auto pr-4 space-y-6 pb-20">
+            
+            <!-- Setup Base -->
+            <div id="setup-container" class="p-6 rounded-2xl border border-brand-500/50 bg-brand-500/5 transition-colors">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-white text-xl">Setup Base, Performance y Logística (One-time)</h3>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <span class="text-sm text-gray-400">Incluir</span>
+                  <input type="checkbox" id="setup-checkbox" onchange="toggleSetup(this.checked)" class="w-5 h-5 rounded border-gray-600 bg-gray-800 text-brand-500" checked>
+                </label>
+              </div>
+              <div id="setup-list" class="space-y-3 transition-opacity">
+                <div class="flex justify-between items-center text-sm"><span class="text-gray-300">Diagnóstico + Estrategia digital</span><span class="text-white font-mono">$5,000</span></div>
+                <div class="flex justify-between items-center text-sm"><span class="text-gray-300">Estandarización de catálogo</span><span class="text-white font-mono">$3,000</span></div>
+                <div class="flex justify-between items-center text-sm"><span class="text-gray-300">Setup medición (Píxeles + GA4)</span><span class="text-white font-mono">$2,000</span></div>
+                <div class="flex justify-between items-center text-sm"><span class="text-gray-300">Setup inicial de campañas (Performance)</span><span class="text-white font-mono">$2,000</span></div>
+                <div class="flex justify-between items-center text-sm"><span class="text-gray-300">Logística (Integraciones con envíos)</span><span class="text-white font-mono">$3,000</span></div>
+                <div class="pt-4 mt-2 border-t border-white/10 flex justify-between items-center font-bold">
+                  <span class="text-brand-400">Total Setup Fijo</span>
+                  <span class="text-brand-400 font-mono text-lg">$15,000</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="p-6 rounded-2xl border border-white/10 bg-white/5">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-white text-xl">1. Redes Sociales (Mensual)</h3>
+                <button id="social-none" onclick="setSocial('none')" class="text-xs px-3 py-1 rounded-full border border-white/10 text-gray-400 hover:bg-white/10 transition-colors">Ninguno</button>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="social-options">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- Ecommerce -->
+            <div class="p-6 rounded-2xl border border-white/10 bg-white/5">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-white text-xl">3. Portal Web + Ecommerce</h3>
+                <button id="ecom-none" onclick="setEcom('none')" class="text-xs px-3 py-1 rounded-full border border-white/10 text-gray-400 hover:bg-white/10 transition-colors">Ninguno</button>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" id="ecom-options">
+                <!-- Injected via JS -->
+              </div>
+              <div id="ecom-mantenimiento" class="flex items-center gap-4 p-4 rounded-xl border border-brand-500/30 bg-brand-500/5">
+                <div class="w-6 h-6 rounded-full bg-brand-500/20 flex items-center justify-center shrink-0">
+                  <i data-lucide="check" class="w-4 h-4 text-brand-500"></i>
+                </div>
+                <div>
+                  <div class="text-white font-medium">Mantenimiento web (Mensual Requerido)</div>
+                  <div class="text-gray-400 text-sm">Soporte, mejoras menores, updates. <span class="text-brand-400 font-mono">+$300/mes</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Marketplaces -->
+              <div id="marketplaces-container" class="p-6 rounded-2xl border border-white/10 bg-white/5 transition-colors">
+                <label class="flex items-start gap-4 cursor-pointer group">
+                  <div class="mt-1">
+                    <input type="checkbox" id="marketplaces-checkbox" onchange="toggleMarketplaces(this.checked)" class="w-5 h-5 rounded border-gray-600 bg-gray-800 text-brand-500">
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-bold text-white text-lg group-hover:text-brand-400 transition-colors">5. Marketplaces</h3>
+                    <p class="text-xs text-gray-400 mt-1 mb-4">FB Marketplace, Mercado Libre, Amazon, TikTok Shop.</p>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between items-center border-b border-white/5 pb-2"><span class="text-gray-300">Setup (One-time)</span><span class="text-white font-mono">$10,000</span></div>
+                      <div class="flex justify-between items-center"><span class="text-gray-300">Gestión (Mensual)</span><span class="text-brand-400 font-mono">$3,000</span></div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              <!-- CRM -->
+              <div id="crm-container" class="p-6 rounded-2xl border border-white/10 bg-white/5 transition-colors">
+                <label class="flex items-start gap-4 cursor-pointer group">
+                  <div class="mt-1">
+                    <input type="checkbox" id="crm-checkbox" onchange="toggleCrm(this.checked)" class="w-5 h-5 rounded border-gray-600 bg-gray-800 text-brand-500">
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-bold text-white text-lg group-hover:text-brand-400 transition-colors">6. Mini CRM</h3>
+                    <p class="text-xs text-gray-400 mt-1 mb-4">Fase 1: Ventas + inventario + dashboard.</p>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between items-center border-b border-white/5 pb-2"><span class="text-gray-300">Setup (One-time)</span><span class="text-white font-mono">$35,000</span></div>
+                      <div class="flex justify-between items-center"><span class="text-gray-300">Soporte (Mensual)</span><span class="text-brand-400 font-mono">$300</span></div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Card -->
+          <div class="lg:w-1/3">
+            <div class="sticky top-0 p-8 rounded-3xl border border-brand-500/30 bg-gradient-to-b from-brand-500/10 to-transparent">
+              <h3 class="text-2xl font-bold text-white mb-8 border-b border-white/10 pb-6">Resumen de Inversión</h3>
+              <div class="space-y-8">
+                <div>
+                  <div class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Inversión Inicial (One-time)</div>
+                  <div class="text-5xl font-bold text-white font-mono tracking-tight" id="total-onetime">$0 <span class="text-xl text-gray-500 font-sans">MXN</span></div>
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-brand-400 uppercase tracking-wider mb-2">Iguala Operativa (Mensual)</div>
+                  <div class="text-5xl font-bold text-brand-400 font-mono tracking-tight" id="total-monthly">$0 <span class="text-xl text-brand-500/50 font-sans">MXN</span></div>
+                </div>
+              </div>
+              <div class="mt-10 pt-8 border-t border-white/10 text-xs text-gray-400 space-y-4 leading-relaxed">
+                <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                  <strong class="text-white block mb-1">Inversión recomendada en Ads (Mensual):</strong>
+                  <ul class="space-y-1 ml-2">
+                    <li>• Base: $10k – $30k</li>
+                    <li>• Growth: $30k – $80k</li>
+                    <li>• Pro: $80k+</li>
+                  </ul>
+                  <p class="mt-2 text-gray-500 italic">*Pago directo a plataformas (Meta/TikTok).</p>
+                </div>
+                <p><strong class="text-white">Condiciones:</strong> Precios sujetos a validación de número real de SKUs, variantes, assets disponibles y estado de inventarios.</p>
+                <p><strong class="text-white">No incluye:</strong> Comisiones de marketplaces, pasarelas de pago, envíos ni licencias de temas/apps.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer Controls -->
+  <footer class="h-20 flex items-center justify-between px-8 border-t border-white/10 shrink-0 z-50 bg-[#0a0a0a]">
+    <div class="flex-1">
+      <div class="h-1 w-full max-w-md bg-white/10 rounded-full overflow-hidden">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-brand-500 to-blue-500 transition-all duration-300 w-0"></div>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <button id="btn-prev" onclick="prevSlide()" class="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
+        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        <span class="hidden md:inline">Anterior</span>
+      </button>
+      <button id="btn-next" onclick="nextSlide()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500 hover:bg-brand-400 text-white disabled:opacity-30 disabled:hover:bg-brand-500 transition-colors">
+        <span class="hidden md:inline">Siguiente</span>
+        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    // Data injections
+    const slideNames = [
+      "Portada", "Contexto", "Objetivos", "Alcance", "Estrategia",
+      "Roadmap", "Requerimientos", "Riesgos", "Cotización"
+    ];
+
+    const objectives = [
+      { num: "01", title: "Presencia Digital", desc: "Meta + TikTok. Comunidad y confianza." },
+      { num: "02", title: "Ecommerce DTC", desc: "Catálogo, pagos y envíos automatizados." },
+      { num: "03", title: "Marketplaces", desc: "Amazon, Mercado Libre, FB, TikTok Shop." },
+      { num: "04", title: "Control Central", desc: "Un solo panel para pedidos e inventario." },
+      { num: "05", title: "Data & Medición", desc: "ROAS, CAC, LTV y rotación por SKU." },
+    ];
+
+    const scopeData = [
+      {
+        icon: "palette", title: "Branding",
+        items: ["Definición de propuesta de valor única", "Creación de lineamientos visuales y de tono", "Arquitectura y categorización de productos"],
+        deliverables: "Entregables exactos: Micro-brandbook, mensajes clave y guía de fotos."
+      },
+      {
+        icon: "smartphone", title: "Social Media",
+        items: ["Estrategia en Meta (enfocada en confianza, catálogo y remarketing)", "Estrategia en TikTok (enfocada en alcance y tutoriales)", "Gestión de comunidad (Community Management)"],
+        deliverables: "Entregables exactos: Calendario de contenidos, producción, CM, guiones y reporte."
+      },
+      {
+        icon: "trending-up", title: "Performance",
+        items: ["Diseño de Funnel de conversión", "Configuración de remarketing dinámico", "Implementación de catálogo dinámico en Meta"],
+        deliverables: "Entregables exactos: Estructura de campañas, creativos, optimización y reporte (ROAS, CPA, CAC)."
+      },
+      {
+        icon: "globe", title: "Ecommerce",
+        items: ["Carga de catálogo completo y estructurado", "Creación de fichas de producto detalladas", "Configuración de checkout y pagos (Stripe/MercadoPago)", "Integración de envíos locales y nacionales con automatizaciones"],
+        deliverables: "Entregables exactos: Portal web y Ecommerce 100% funcional y listo para vender."
+      },
+      {
+        icon: "store", title: "Marketplaces",
+        items: ["Apertura en Facebook Marketplace", "Apertura en Mercado Libre", "Apertura en Amazon", "Apertura en TikTok Shop"],
+        deliverables: "Entregables exactos: Alta de cuentas, carga de catálogo, estrategia de pricing y gestión de reputación."
+      },
+      {
+        icon: "database", title: "Mini CRM",
+        items: ["Centralización de ventas e inventario", "Control analítico de clientes", "Implementación de CRM operativo ligero (Fase 1)"],
+        deliverables: "Entregables exactos: Base maestra de productos, flujo de pedidos y dashboard de métricas."
+      }
+    ];
+
+    const audience = [
+      "Renovación de hogar (mudanzas, bodas)",
+      "Buscadores de estética 'Hotel/Instagram'",
+      "Compradores prácticos (durabilidad)",
+      "Regalos (baby shower, casas nuevas)"
+    ];
+
+    const phases = [
+      { phase: "Fase 0", time: "1-2 sem", title: "Preparación", desc: "Auditoría, catálogo, setup básico." },
+      { phase: "Fase 1", time: "Mes 1", title: "Presencia", desc: "Contenido orgánico, primeros leads." },
+      { phase: "Fase 2", time: "Mes 2", title: "Ecommerce", desc: "Sitio live, pixel, campañas conversión." },
+      { phase: "Fase 3", time: "Mes 3", title: "Marketplaces", desc: "Publicaciones, logística, inventario." },
+      { phase: "Fase 4", time: "Mes 4", title: "Mini CRM", desc: "Centralización, dashboards, control." }
+    ];
+
+    const reqs = [
+      "Catálogo con precios, costos y stock", "Fotos y acceso a producto", "Tiempos reales de entrega",
+      "Políticas claras (devoluciones)", "Responsable interno asignado", "Accesos a cuentas actuales"
+    ];
+
+    const kpis = [
+      { label: "Contenido", val: "Alcance, Engagement, CTR" },
+      { label: "Ecommerce", val: "Conversión, AOV, ROAS, CAC" },
+      { label: "Operación", val: "Tiempo envío, Rotación SKU" },
+      { label: "Marketplaces", val: "Ventas, Reputación, Margen" }
+    ];
+
+    const risks = [
+      { r: "Inventario desordenado", m: "CRM desde temprano y SKUización." },
+      { r: "Fotos de baja calidad", m: "Shooting mínimo viable (texturas)." },
+      { r: "Envíos lentos", m: "Pilotos por zonas + partners confiables." },
+      { r: "Competencia por precio", m: "Vender por valor y bundles." },
+      { r: "Demasiados canales a la vez", m: "Fases: 1º Web/Redes, 2º Marketplaces." }
+    ];
+
+    const socialOptions = [
+      { id: "base", label: "Paquete Base", price: 12000, features: ["12 piezas/mes", "Community Management (L–V)", "Reporte básico + recomendaciones"] },
+      { id: "growth", label: "Paquete Growth", price: 17000, features: ["20 piezas/mes", "Community Management (L–S)", "Reporte básico + recomendaciones", "1 sesión de grabación al mes"] },
+      { id: "pro", label: "Paquete Pro", price: 22000, features: ["30 piezas/mes", "CM (L–S) + ventas por DM", "1 sesión de grabación al mes", "Levantamiento inicial catálogo", "Reporte avanzado"] }
+    ];
+
+    const ecomOptions = [
+      { id: "shopify", label: "Opción A: Shopify", time: "3-5 semanas", price: 25000, features: ["Diseño base (tema pro + ajustes)", "Catálogo y checkout", "MercadoPago/Stripe", "Envíos (agregador)", "Automatizaciones básicas"] },
+      { id: "custom", label: "Opción B: Custom", time: "A definir", price: 45000, features: ["Diseño + desarrollo a medida", "Performance y UX avanzado", "Automatizaciones robustas", "Integraciones complejas"] }
+    ];
+
+    // Build DOM
+    document.getElementById('menu-items-container').innerHTML = slideNames.map((name, idx) => `
+      <button onclick="goToSlide(${idx})" class="menu-item w-full text-left px-6 py-4 transition-colors flex items-center text-gray-400 hover:bg-white/5 hover:text-white">
+        <span class="menu-num text-xs font-mono mr-4 opacity-40">${(idx + 1).toString().padStart(2, "0")}</span>
+        <span class="font-medium">${name}</span>
+      </button>
+    `).join('');
+
+    document.getElementById('objectives-grid').innerHTML = objectives.map((obj, i) => `
+      <div class="p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors ${i < 2 ? "md:col-span-1" : ""} ${i === 2 ? "md:col-span-1" : ""} ${i === 3 ? "md:col-start-1 md:col-span-1" : ""}">
+        <div class="text-5xl font-black text-brand-500/30 mb-6">${obj.num}</div>
+        <h3 class="text-2xl font-bold text-white mb-3">${obj.title}</h3>
+        <p class="text-gray-400 text-lg">${obj.desc}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('scope-tabs').innerHTML = scopeData.map((tab, i) => `
+      <button onclick="setScopeTab(${i})" class="scope-tab-btn flex items-center gap-4 p-5 rounded-2xl text-left transition-all duration-200 ${i === 0 ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/20' : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/5'}">
+        <i data-lucide="${tab.icon}" class="w-6 h-6 shrink-0 ${i === 0 ? 'text-white' : 'text-gray-500'}"></i>
+        <span class="font-bold text-xl">${tab.title}</span>
+      </button>
+    `).join('');
+
+    document.getElementById('scope-content').innerHTML = scopeData.map((tab, i) => `
+      <div class="scope-tab-content p-12 rounded-3xl bg-white/5 border border-white/10 flex-1 flex-col absolute inset-0 ${i === 0 ? 'active' : ''}">
+        <h3 class="text-4xl font-bold text-white mb-10">${tab.title}</h3>
+        <div class="space-y-8 flex-1">
+          <div>
+            <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-6">¿Qué incluye exactamente?</h4>
+            <ul class="space-y-4">
+              ${tab.items.map(item => `
+                <li class="flex items-start gap-4 text-gray-200 text-xl">
+                  <div class="w-2 h-2 mt-2.5 rounded-full bg-brand-400 shrink-0"></div>
+                  <span>${item}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        </div>
+        <div class="mt-10 pt-8 border-t border-white/10">
+          <h4 class="text-sm font-bold text-brand-400 uppercase tracking-wider mb-3">Resultado Final</h4>
+          <p class="text-white text-xl font-medium leading-relaxed">${tab.deliverables}</p>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('strategy-audience').innerHTML = audience.map(item => `
+      <div class="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-gray-200 text-lg font-medium">${item}</div>
+    `).join('');
+
+    document.getElementById('roadmap-grid').innerHTML = phases.map((p, i) => `
+      <div class="relative z-10 flex flex-col items-center text-center group">
+        <div class="w-20 h-20 rounded-full bg-[#0a0a0a] border-4 border-brand-500 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(20,184,166,0.2)] group-hover:scale-110 transition-transform">
+          <span class="font-bold text-white text-xl">${i}</span>
+        </div>
+        <div class="bg-white/5 border border-white/10 p-6 rounded-3xl w-full h-full">
+          <div class="text-brand-400 text-sm font-bold uppercase tracking-wider mb-2">${p.time}</div>
+          <h3 class="text-xl font-bold text-white mb-3">${p.title}</h3>
+          <p class="text-base text-gray-400 leading-relaxed">${p.desc}</p>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('reqs-list').innerHTML = reqs.map(req => `
+      <div class="flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/10">
+        <div class="w-2.5 h-2.5 rounded-full bg-purple-400 shrink-0"></div>
+        <span class="text-gray-200 text-lg">${req}</span>
+      </div>
+    `).join('');
+
+    document.getElementById('kpis-list').innerHTML = kpis.map(kpi => `
+      <div class="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col">
+        <span class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-2">${kpi.label}</span>
+        <span class="text-white text-xl font-medium">${kpi.val}</span>
+      </div>
+    `).join('');
+
+    document.getElementById('risks-list').innerHTML = risks.map(item => `
+      <div class="flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10">
+        <div class="md:w-1/2 flex items-center gap-6 w-full p-6 rounded-2xl bg-red-500/10 border border-red-500/20">
+          <i data-lucide="alert-triangle" class="w-8 h-8 text-red-400 shrink-0"></i>
+          <span class="text-white font-medium text-xl">${item.r}</span>
+        </div>
+        <div class="hidden md:block text-gray-500">→</div>
+        <div class="md:w-1/2 flex items-center gap-6 w-full p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+          <i data-lucide="shield-check" class="w-8 h-8 text-emerald-400 shrink-0"></i>
+          <span class="text-emerald-100 text-xl">${item.m}</span>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('social-options').innerHTML = socialOptions.map(opt => `
+      <button id="social-${opt.id}" onclick="setSocial('${opt.id}')" class="p-5 rounded-xl border text-left transition-all duration-200 relative overflow-hidden border-white/10 hover:bg-white/5">
+        <div class="top-bar absolute top-0 left-0 w-full h-1 bg-brand-500 hidden"></div>
+        <div class="flex justify-between items-start mb-2">
+          <div class="font-bold text-white text-lg">${opt.label}</div>
+          <div class="indicator"><i data-lucide="circle" class="w-5 h-5 text-gray-600"></i></div>
+        </div>
+        <div class="text-brand-400 font-mono text-base mb-4">$${opt.price.toLocaleString()} <span class="text-xs text-gray-500">/mes</span></div>
+        <ul class="text-gray-300 text-xs space-y-2">
+          ${opt.features.map(f => `<li class="flex items-start gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-500/70 shrink-0 mt-0.5"></i><span class="leading-tight">${f}</span></li>`).join('')}
+        </ul>
+      </button>
+    `).join('');
+
+    document.getElementById('ecom-options').innerHTML = ecomOptions.map(opt => `
+      <button id="ecom-${opt.id}" onclick="setEcom('${opt.id}')" class="p-5 rounded-xl border text-left transition-all duration-200 relative overflow-hidden border-white/10 hover:bg-white/5">
+        <div class="top-bar absolute top-0 left-0 w-full h-1 bg-brand-500 hidden"></div>
+        <div class="flex justify-between items-start mb-1">
+          <div class="font-bold text-white text-lg">${opt.label}</div>
+          <div class="indicator"><i data-lucide="circle" class="w-5 h-5 text-gray-600"></i></div>
+        </div>
+        <div class="text-brand-400 font-mono text-base mb-1">$${opt.price.toLocaleString()} <span class="text-xs text-gray-500">(One-time)</span></div>
+        <div class="text-gray-500 text-xs mb-4">Tiempo típico: ${opt.time}</div>
+        <ul class="text-gray-300 text-xs space-y-2">
+          ${opt.features.map(f => `<li class="flex items-start gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-500/70 shrink-0 mt-0.5"></i><span class="leading-tight">${f}</span></li>`).join('')}
+        </ul>
+      </button>
+    `).join('');
+
+    // Logic
+    let currentSlide = 0;
+    const totalSlides = 9;
+
+    function updateSlides(direction) {
+      document.querySelectorAll('.slide').forEach((slide, index) => {
+        slide.classList.remove('active', 'exit', 'enter-reverse');
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else if (index < currentSlide) {
+          slide.classList.add('exit');
+        } else {
+          slide.style.display = 'none';
+        }
+      });
+
+      const progress = ((currentSlide + 1) / totalSlides) * 100;
+      document.getElementById('progress-bar').style.width = `${progress}%`;
+      document.getElementById('slide-counter').innerText = `${currentSlide + 1} / ${totalSlides}`;
+      document.getElementById('btn-prev').disabled = currentSlide === 0;
+      document.getElementById('btn-next').disabled = currentSlide === totalSlides - 1;
+
+      document.querySelectorAll('.menu-item').forEach((item, index) => {
+        if (index === currentSlide) {
+          item.classList.add('bg-brand-500/10', 'text-brand-400', 'border-r-2', 'border-brand-500');
+          item.classList.remove('text-gray-400', 'hover:bg-white/5', 'hover:text-white');
+          item.querySelector('.menu-num').classList.replace('opacity-40', 'text-brand-500/50');
+        } else {
+          item.classList.remove('bg-brand-500/10', 'text-brand-400', 'border-r-2', 'border-brand-500');
+          item.classList.add('text-gray-400', 'hover:bg-white/5', 'hover:text-white');
+          item.querySelector('.menu-num').classList.replace('text-brand-500/50', 'opacity-40');
+        }
+      });
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlides(1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides(-1);
+      }
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateSlides(0);
+      toggleMenu(false);
+    }
+
+    function toggleMenu(show) {
+      const menu = document.getElementById('menu-overlay');
+      const menuPanel = document.getElementById('menu-panel');
+      if (show) {
+        menu.classList.remove('hidden');
+        setTimeout(() => {
+          menu.classList.remove('opacity-0');
+          menuPanel.classList.remove('-translate-x-full');
+        }, 10);
+      } else {
+        menu.classList.add('opacity-0');
+        menuPanel.classList.add('-translate-x-full');
+        setTimeout(() => {
+          menu.classList.add('hidden');
+        }, 300);
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const menu = document.getElementById('menu-overlay');
+      if (!menu.classList.contains('hidden')) {
+        if (e.key === 'Escape') toggleMenu(false);
+        return;
+      }
+      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    function setScopeTab(index) {
+      document.querySelectorAll('.scope-tab-btn').forEach((btn, i) => {
+        if (i === index) {
+          btn.classList.add('bg-brand-500', 'text-white', 'shadow-lg', 'shadow-brand-500/20');
+          btn.classList.remove('bg-white/5', 'text-gray-400', 'hover:bg-white/10', 'border-white/5');
+          btn.querySelector('i').classList.replace('text-gray-500', 'text-white');
+        } else {
+          btn.classList.remove('bg-brand-500', 'text-white', 'shadow-lg', 'shadow-brand-500/20');
+          btn.classList.add('bg-white/5', 'text-gray-400', 'hover:bg-white/10', 'border-white/5');
+          btn.querySelector('i').classList.replace('text-white', 'text-gray-500');
+        }
+      });
+
+      document.querySelectorAll('.scope-tab-content').forEach((content, i) => {
+        if (i === index) {
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
+        }
+      });
+    }
+
+    let state = {
+      social: 'base',
+      ecom: 'shopify',
+      marketplaces: false,
+      crm: false,
+      includeSetup: true
+    };
+
+    function updatePricing() {
+      const setupEstrategia = 5000;
+      const catalogo = 3000;
+      const medicion = 2000;
+      const performanceSetup = 2000;
+      const logisticaSetup = 3000;
+      const fixedOneTime = setupEstrategia + catalogo + medicion + performanceSetup + logisticaSetup;
+
+      let totalOneTime = state.includeSetup ? fixedOneTime : 0;
+      let totalMonthly = 0;
+
+      if (state.social === "base") totalMonthly += 12000;
+      if (state.social === "growth") totalMonthly += 17000;
+      if (state.social === "pro") totalMonthly += 22000;
+
+      if (state.ecom === "shopify") totalOneTime += 25000;
+      if (state.ecom === "custom") totalOneTime += 45000;
+      if (state.ecom !== "none") totalMonthly += 300;
+
+      if (state.marketplaces) {
+        totalOneTime += 10000;
+        totalMonthly += 3000;
+      }
+
+      if (state.crm) {
+        totalOneTime += 35000;
+        totalMonthly += 300;
+      }
+
+      document.getElementById('total-onetime').innerText = `$${totalOneTime.toLocaleString()}`;
+      document.getElementById('total-monthly').innerText = `$${totalMonthly.toLocaleString()}`;
+
+      ['none', 'base', 'growth', 'pro'].forEach(id => {
+        const el = document.getElementById(`social-${id}`);
+        if (!el) return;
+        if (state.social === id) {
+          if (id === 'none') {
+            el.classList.add('bg-white/20', 'border-white/30', 'text-white');
+            el.classList.remove('border-white/10', 'text-gray-400', 'hover:bg-white/10');
+          } else {
+            el.classList.add('border-brand-500', 'bg-brand-500/10', 'shadow-[0_0_15px_rgba(20,184,166,0.15)]');
+            el.classList.remove('border-white/10', 'hover:bg-white/5');
+            el.querySelector('.indicator').innerHTML = '<i data-lucide="check-circle-2" class="w-5 h-5 text-brand-500"></i>';
+            el.querySelector('.top-bar').classList.remove('hidden');
+          }
+        } else {
+          if (id === 'none') {
+            el.classList.remove('bg-white/20', 'border-white/30', 'text-white');
+            el.classList.add('border-white/10', 'text-gray-400', 'hover:bg-white/10');
+          } else {
+            el.classList.remove('border-brand-500', 'bg-brand-500/10', 'shadow-[0_0_15px_rgba(20,184,166,0.15)]');
+            el.classList.add('border-white/10', 'hover:bg-white/5');
+            el.querySelector('.indicator').innerHTML = '<i data-lucide="circle" class="w-5 h-5 text-gray-600"></i>';
+            el.querySelector('.top-bar').classList.add('hidden');
+          }
+        }
+      });
+
+      ['none', 'shopify', 'custom'].forEach(id => {
+        const el = document.getElementById(`ecom-${id}`);
+        if (!el) return;
+        if (state.ecom === id) {
+          if (id === 'none') {
+            el.classList.add('bg-white/20', 'border-white/30', 'text-white');
+            el.classList.remove('border-white/10', 'text-gray-400', 'hover:bg-white/10');
+          } else {
+            el.classList.add('border-brand-500', 'bg-brand-500/10', 'shadow-[0_0_15px_rgba(20,184,166,0.15)]');
+            el.classList.remove('border-white/10', 'hover:bg-white/5');
+            el.querySelector('.indicator').innerHTML = '<i data-lucide="check-circle-2" class="w-5 h-5 text-brand-500"></i>';
+            el.querySelector('.top-bar').classList.remove('hidden');
+          }
+        } else {
+          if (id === 'none') {
+            el.classList.remove('bg-white/20', 'border-white/30', 'text-white');
+            el.classList.add('border-white/10', 'text-gray-400', 'hover:bg-white/10');
+          } else {
+            el.classList.remove('border-brand-500', 'bg-brand-500/10', 'shadow-[0_0_15px_rgba(20,184,166,0.15)]');
+            el.classList.add('border-white/10', 'hover:bg-white/5');
+            el.querySelector('.indicator').innerHTML = '<i data-lucide="circle" class="w-5 h-5 text-gray-600"></i>';
+            el.querySelector('.top-bar').classList.add('hidden');
+          }
+        }
+      });
+
+      const ecomMaint = document.getElementById('ecom-mantenimiento');
+      if (state.ecom !== 'none') {
+        ecomMaint.classList.remove('hidden');
+        ecomMaint.classList.add('flex');
+      } else {
+        ecomMaint.classList.add('hidden');
+        ecomMaint.classList.remove('flex');
+      }
+
+      document.getElementById('setup-checkbox').checked = state.includeSetup;
+      const setupContainer = document.getElementById('setup-container');
+      const setupList = document.getElementById('setup-list');
+      if (state.includeSetup) {
+        setupContainer.classList.add('border-brand-500/50', 'bg-brand-500/5');
+        setupContainer.classList.remove('border-white/10', 'bg-white/5');
+        setupList.classList.remove('opacity-50');
+      } else {
+        setupContainer.classList.remove('border-brand-500/50', 'bg-brand-500/5');
+        setupContainer.classList.add('border-white/10', 'bg-white/5');
+        setupList.classList.add('opacity-50');
+      }
+
+      document.getElementById('marketplaces-checkbox').checked = state.marketplaces;
+      const mkContainer = document.getElementById('marketplaces-container');
+      if (state.marketplaces) {
+        mkContainer.classList.add('border-brand-500/50', 'bg-brand-500/5');
+        mkContainer.classList.remove('border-white/10', 'bg-white/5');
+      } else {
+        mkContainer.classList.remove('border-brand-500/50', 'bg-brand-500/5');
+        mkContainer.classList.add('border-white/10', 'bg-white/5');
+      }
+
+      document.getElementById('crm-checkbox').checked = state.crm;
+      const crmContainer = document.getElementById('crm-container');
+      if (state.crm) {
+        crmContainer.classList.add('border-brand-500/50', 'bg-brand-500/5');
+        crmContainer.classList.remove('border-white/10', 'bg-white/5');
+      } else {
+        crmContainer.classList.remove('border-brand-500/50', 'bg-brand-500/5');
+        crmContainer.classList.add('border-white/10', 'bg-white/5');
+      }
+
+      lucide.createIcons();
+    }
+
+    function setSocial(val) { state.social = val; updatePricing(); }
+    function setEcom(val) { state.ecom = val; updatePricing(); }
+    function toggleMarketplaces(val) { state.marketplaces = val; updatePricing(); }
+    function toggleCrm(val) { state.crm = val; updatePricing(); }
+    function toggleSetup(val) { state.includeSetup = val; updatePricing(); }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateSlides(0);
+      setScopeTab(0);
+      updatePricing();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
