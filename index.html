@@ -616,11 +616,13 @@
 
     function updateSlides(direction) {
       document.querySelectorAll('.slide').forEach((slide, index) => {
-        slide.classList.remove('active', 'exit', 'enter-reverse');
+        slide.classList.remove('active');
         if (index === currentSlide) {
-          slide.classList.add('active');
-        } else if (index < currentSlide) {
-          slide.classList.add('exit');
+          slide.style.display = 'flex';
+          // Pequeño retraso para que la transición de CSS funcione después de cambiar el display
+          setTimeout(() => {
+            slide.classList.add('active');
+          }, 10);
         } else {
           slide.style.display = 'none';
         }
